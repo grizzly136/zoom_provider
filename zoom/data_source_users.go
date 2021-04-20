@@ -67,26 +67,21 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 		return diag.FromErr(err)
 	}
 	//usersli:=flatternUsers(&users)
-	if whole_body.users != nil {
-		ois := make([]interface{}, len(*orderItems), len(*orderItems))
 
-		for i, orderItem := range *orderItems {
-			oi := make(map[string]interface{})
+	ois := make([]interface{}, len(whole_body.users), len(whole_body.users))
 
-			oi["id"] = orderItem.Coffee.ID
-			oi["first_name"] = orderItem.Coffee.Name
-			oi["last_name"] = orderItem.Coffee.Teaser
-			oi["email"] = orderItem.Coffee.Description
+	for i, uItem := range whole_body.users {
+		oi := make(map[string]interface{})
 
-			ois[i] = oi
-		}
+		oi["id"] = uItem.id
+		oi["first_name"] = uItem.first_name
+		oi["last_name"] = uItem.last_name
+		oi["email"] = uItem.email
 
-		return ois
+		ois[i] = oi
 	}
 
-	return make([]interface{}, 0)
-
-	if err := d.Set("users", usersli); err != nil {
+	if err := d.Set("users", ois); err != nil {
 		return diag.FromErr(err)
 	}
 	d.SetId(strconv.FormatInt(time.Now().Unix(), 10))
