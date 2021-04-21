@@ -5,6 +5,6 @@ provider "tharun/edu/zoom" {
   version     = "1.0.0"
   constraints = "1.0.0"
   hashes = [
-    "h1:RchluyraCKrrHeFHZhuYjiiq+2jgIgChOxqvPGnpEf8=",
+    "h1:O5trMsa6gvR5rtY+OnkYjffT5aHKwdR23M54yVdKXVs=",
   ]
 }
