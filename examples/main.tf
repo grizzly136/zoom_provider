@@ -17,7 +17,15 @@ data "zoom_users" "all" {
 
 
 }
+resource "zoom_User_instance" "kunal" {
+  first_name = "kunal"
+  last_name  = "gohire"
+  email      = "kunalgohire17@cse.iiitp.ac.in"
+  type       = 1
+}
+data "zoom_users" "list" {
 
-output "users" {
-  value = data.zoom_users.all
+}
+output "name" {
+  value = zoom_User_instance.kunal
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -66,7 +67,8 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxOR0pCSGp1Uk9PRktDTTY4TGpIMGciLCJleHAiOjE2MTkwNjg0MTksImlhdCI6MTYxODk4MjAxOX0.6joHYk8c5ROOvkcLy2yCLcaJ9zIbor6b0E-jRvyNd24")
+	jwt := os.Getenv("bearer")
+	req.Header.Add("authorization", jwt)
 
 	r, err := client.Do(req)
 
