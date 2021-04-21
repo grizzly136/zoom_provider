@@ -12,6 +12,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 )
 
+type Users struct {
+	Id         string `json:"id"`
+	First_name string `json:"first_name"`
+	Last_name  string `json:"last_name"`
+	Email      string `json:"email"`
+}
+
+type whole_body struct {
+	Users []Users `json:"users"`
+}
+
 func dataSourceUsers() *schema.Resource {
 	return &schema.Resource{
 		ReadContext: dataSourceUsersRead,
@@ -44,9 +55,10 @@ func dataSourceUsers() *schema.Resource {
 		},
 	}
 }
+
 func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	client := &http.Client{Timeout: 10 * time.Second}
-	bearer := "Bearer " + "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxOR0pCSGp1Uk9PRktDTTY4TGpIMGciLCJleHAiOjE2MTg5MzgzMjMsImlhdCI6MTYxODg1MTkyNH0.ngd_dOTYMp5ftwP2W-R8XpxHU1dX0i2o6B5xslwLDJ8"
+
 	// Warning or errors can be collected in a slice type
 	var diags diag.Diagnostics
 
@@ -54,29 +66,31 @@ func dataSourceUsersRead(ctx context.Context, d *schema.ResourceData, m interfac
 	if err != nil {
 		return diag.FromErr(err)
 	}
-	req.Header.Add("Authorization", bearer)
+	req.Header.Add("authorization", "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOm51bGwsImlzcyI6ImxOR0pCSGp1Uk9PRktDTTY4TGpIMGciLCJleHAiOjE2MTkwNjg0MTksImlhdCI6MTYxODk4MjAxOX0.6joHYk8c5ROOvkcLy2yCLcaJ9zIbor6b0E-jRvyNd24")
+
 	r, err := client.Do(req)
+
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	defer r.Body.Close()
 
-	whole_body := make([]map[string]interface{}, 0)
-	err = json.NewDecoder(r.Body).Decode(&whole_body)
+	w_b := whole_body{}
+	err = json.NewDecoder(r.Body).Decode(&w_b)
 	if err != nil {
 		return diag.FromErr(err)
 	}
 	//usersli:=flatternUsers(&users)
 
-	ois := make([]interface{}, len(whole_body.users), len(whole_body.users))
+	ois := make([]interface{}, len(w_b.Users))
 
-	for i, uItem := range whole_body.users {
+	for i, uItem := range w_b.Users {
 		oi := make(map[string]interface{})
 
-		oi["id"] = uItem.id
-		oi["first_name"] = uItem.first_name
-		oi["last_name"] = uItem.last_name
-		oi["email"] = uItem.email
+		oi["id"] = uItem.Id
+		oi["first_name"] = uItem.First_name
+		oi["last_name"] = uItem.Last_name
+		oi["email"] = uItem.Email
 
 		ois[i] = oi
 	}
